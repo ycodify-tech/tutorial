@@ -1,6 +1,6 @@
 "use server";
 
-import { ycodifyExternal } from ".";
+import { ycodifyExternal } from "../ycodify/axiosInstances";
 
 export async function loginSubmit({
   username,
@@ -10,7 +10,7 @@ export async function loginSubmit({
   password: string;
 }) {
   try {
-    const { data } = await ycodifyExternal.post("/auth/signin", {
+    const { data } = await ycodifyExternal.post("/v2/auth/signin", {
       username,
       password,
     });

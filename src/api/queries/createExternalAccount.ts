@@ -1,5 +1,5 @@
 "use server";
-import { ycodifyExternal } from ".";
+import { ycodifyExternal } from "../ycodify/axiosInstances";
 
 export type TSignupSchema = {
   username: string;
@@ -12,7 +12,7 @@ export type TSignupSchema = {
 export async function createExternalAccount(data: TSignupSchema) {
   try {
     const clientExists = await ycodifyExternal
-      .get(`/id/open/account/by/username/${data.username}/exists`)
+      .get(`/v2/id/open/account/by/username/${data.username}/exists`)
       .then((res) => res.status === 200);
 
     if (clientExists) {
@@ -20,7 +20,7 @@ export async function createExternalAccount(data: TSignupSchema) {
     }
 
     const { data: responseData } = await ycodifyExternal.post(
-      "/id/open/account-role",
+      "/v2/id/open/account-role",
       {
         account: {
           username: data.username,

@@ -1,9 +1,11 @@
 "use client";
 import { useState } from "react";
-import { loginSubmit } from "../api/externalLogin";
-import { getUserPlayer } from "../api/getUserPlayer";
+import { signIn } from "next-auth/react";
+import { sendRecoveryHash } from "@/api/queries/sendRecoveryHash";
+import { useRouter } from "next/navigation";
 
-export function Demo() {
+export function Login() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -16,15 +18,35 @@ export function Demo() {
     username: string;
     password: string;
   }) {
-    const loginResponse = await loginSubmit({ username, password });
-    if (loginResponse.error) {
-      alert("Erro ao logar");
+    const result = await signIn("credentials", {
+      username: username,
+      password: password,
+      redirect: true,
+      callbackUrl: "/",
+    });
+    console.log("loginResult", result);
+
+    if (!result?.error) {
       return;
     }
-    console.log("loginResponse", loginResponse);
 
-    const user = await getUserPlayer({ username });
-    console.log("user", user);
+    const error = JSON.parse(result?.error as string);
+    switch (error?.status) {
+      case 401:
+        alert("Incorrect username or password");
+        return;
+      case 403:
+        await sendRecoveryHash({
+          username: username,
+        });
+        alert("Recovery hash sent to your email");
+
+        router.push("/activate-account");
+        return;
+      default:
+        console.log("error", error);
+        alert("Ops! Something went wrong");
+    }
   }
 
   return (

@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
-import { createExternalAccount } from "../api/createExternalAccount";
-import { createUserPlayer } from "../api/createUserPlayer";
+import { createExternalAccount } from "@/api/queries/createExternalAccount";
 
 export function SignupComponent() {
   const [formData, setFormData] = useState({
@@ -15,7 +14,7 @@ export function SignupComponent() {
   async function onSubmit(formData: any) {
     console.log("formData", formData);
 
-    const createAccountResponse = await createExternalAccount({
+    const response = await createExternalAccount({
       username: formData.username,
       email: formData.email,
       password: formData.password,
@@ -23,29 +22,7 @@ export function SignupComponent() {
       organizationUuid: formData.organizationUuid,
     });
 
-    console.log("createAccountResponse", createAccountResponse);
-
-    const createUserPlayerResponse = await createUserPlayer({
-      name: "Nome do artista",
-      username: formData.username as string,
-      streetname: "rua alfredo",
-      streetnumber: 123,
-      streetcomplement: "casa da rua",
-      country: "brasil",
-      state: "RN",
-      city: "Natal",
-      zipcode: "59140590",
-      email: formData.email,
-      aboutartist: "Artista de Natal",
-      documentnumber: "123456789",
-      allownotifications: true,
-      avatar: "avatar string",
-      skins: "skins string",
-      role: formData.role,
-      acceptplataformterms: true,
-    });
-
-    console.log("createUserPlayerResponse", createUserPlayerResponse);
+    console.log("response", response);
   }
 
   return (
